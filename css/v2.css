@@ -1,0 +1,85 @@
+/* Vitrolo — v2.css · 2026-11-06 · giriş v2 (marka açılışı + kendiliğinden yanan vitrin + camda örnek siteler), örnek işler ızgarası, zemin dokusu.
+   Eski dosyalar (base/scenes/pages.css, hero.js) değişmedi; bu dosya onların ÜSTÜNE yazar. Geri dönmek için: build.py'de V2=False. */
+
+/* ---------- 1) Marka açılışı (toplam 1,0 sn, oturumda bir kez, yalnız ana sayfa; hareket azaltma/static/iç geçişte yok; tık/tuş/kaydırma ile atlanır) ----------
+   Halka çizilir (0-0,5 sn), nokta yerine oturur, sonra halkanın ortasından bir göz bebeği gibi açılan perde sayfayı gösterir (0,6-1,0 sn).
+   Ölçüm 2026-11-06: perde açıkken de LCP ilk karede (64-88 ms) kaydediliyor; içerik perdenin altında baştan boyanıyor.
+   Not: html'deki sınıflar vti / vti-skip / vti-done (bir ara 'intro' adı, .intro kuralıyla bütün sayfayı gizledi; bu yüzden ayrı ad). */
+@property --vti-r{syntax:'<length>';inherits:false;initial-value:0px}
+.intro{display:none}
+html.vti .intro{display:grid;place-items:center;position:fixed;inset:0;z-index:300;pointer-events:none;background:var(--paper);
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent var(--vti-r),#000 calc(var(--vti-r) + 1px));mask:radial-gradient(circle at 50% 50%,transparent var(--vti-r),#000 calc(var(--vti-r) + 1px));
+  animation:vti-open .4s cubic-bezier(.76,0,.24,1) .6s forwards}
+html.vti-done .intro{display:none}
+html.vti .intro svg{width:min(26vw,132px);height:auto;animation:vti-ring .4s cubic-bezier(.76,0,.24,1) .6s both}
+.intro path{stroke-dasharray:1;stroke-dashoffset:1;animation:vti-d .36s cubic-bezier(.65,0,.35,1) forwards}
+.intro .i1{animation-delay:.02s}.intro .i2{animation-delay:.1s}.intro .i3{animation-delay:.18s}.intro .i4{animation-delay:.3s;animation-duration:.24s}
+.intro .i5{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:vti-dot .24s cubic-bezier(.34,1.56,.64,1) .46s forwards}
+html.vti-skip .intro{animation:vti-fade .14s linear forwards}
+@keyframes vti-d{to{stroke-dashoffset:0}}
+@keyframes vti-dot{to{transform:scale(1)}}
+@keyframes vti-ring{to{transform:scale(9);opacity:0}}
+@keyframes vti-open{to{--vti-r:150vmax;visibility:hidden}}
+@keyframes vti-fade{to{opacity:0;visibility:hidden}}
+
+/* ---------- 2) Hero v2: pin yok, sahne kendiliğinden oynar ---------- */
+html.mo .hero--v2{height:auto;padding-top:calc(var(--hdr) + clamp(24px,4vw,56px));padding-bottom:calc(var(--sec)*.45)}
+html.mo .hero--v2 .hero__pin{position:relative;height:auto;min-height:0;display:block;padding-top:0;overflow:visible}
+.hero--v2 .hero__sc{gap:14px}
+.vs__shows{position:absolute;inset:0;border-radius:.9cqw;overflow:hidden;z-index:1;pointer-events:none}
+.vs__show{position:absolute;left:0;top:0;width:100%;height:auto;max-width:none;opacity:0}
+.vs__bar{width:100%;max-width:620px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.vs__now{margin:0;font-size:.875rem;line-height:1.35;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vs__now a{font-weight:700;color:var(--blue-d);text-underline-offset:3px}
+.vs__live{width:8px;height:8px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 0 0 rgba(47,91,234,.5)}
+html.mo .vs__live{animation:vs-live 2s ease-out infinite}
+@keyframes vs-live{0%{box-shadow:0 0 0 0 rgba(47,91,234,.45)}80%,100%{box-shadow:0 0 0 9px rgba(47,91,234,0)}}
+.vs__pause{min-height:44px;min-width:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-weight:600;font-size:.875rem;flex:none}
+.vs__pause:hover{border-color:var(--ink)}
+.vs__pause[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hero--v2 .vs{transform-style:preserve-3d}
+@media (max-width:600px){.vs__bar{flex-wrap:wrap}}
+
+/* ---------- 3) Zemin dokusu (bilgi bankası G17, opaklık %4,5; yalnız kâğıt zeminde) ---------- */
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .086 0 0 0 0 .13 0 0 0 0 .243 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url%28%23n%29' opacity='.08'/%3E%3C/svg%3E")}
+
+/* ---------- 4) Örnek işler ızgarası (/work) ---------- */
+.wks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(40px,5vw,72px) var(--gut);margin-top:clamp(32px,4vw,56px)}
+.wk{display:flex;flex-direction:column;gap:22px}
+.wk__media{position:relative;display:block;aspect-ratio:16/11;border-radius:var(--r-m);background:var(--mist);overflow:hidden;isolation:isolate;transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .5s var(--ease-out)}
+.wk:nth-child(3n+2) .wk__media{background:#E9E5DA}.wk:nth-child(3n) .wk__media{background:#DDE6FA}
+.wk__lap{position:absolute;left:6%;top:9%;width:72%;aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:#fff;border:6px solid var(--ink);box-shadow:0 30px 60px -20px rgba(22,33,62,.45)}
+.wk__lap img{width:100%;height:100%;object-fit:cover;object-position:50% 0;transition:object-position 5s cubic-bezier(.45,0,.55,1)}
+.wk__ph{position:absolute;right:7%;bottom:8%;width:21%;aspect-ratio:300/649;border-radius:18px;overflow:hidden;background:#fff;border:5px solid var(--ink);box-shadow:0 24px 44px -14px rgba(22,33,62,.5);transform:rotate(4deg);transition:transform .6s var(--ease-out)}
+.wk__ph img{width:100%;height:100%;object-fit:cover;object-position:50% 0}
+.wk__badge{position:absolute;left:16px;bottom:16px;z-index:2;font-size:.75rem;font-weight:700;letter-spacing:.04em;padding:6px 10px;border-radius:999px;background:var(--ink);color:#fff}
+@media (hover:hover){.wk__media:hover .wk__lap img,.wk__media:focus-visible .wk__lap img{object-position:50% 100%}.wk__media:hover .wk__ph{transform:rotate(0) translateY(-8px)}}
+.wk__lbl{margin:0 0 6px;font-size:.8125rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--blue-d)}
+.wk__lbl span{text-transform:none;letter-spacing:0;color:var(--mute);font-weight:500}
+.wk__t{font-size:clamp(1.5rem,1.1rem + 1.2vw,2.1rem);margin-bottom:10px}
+.wk__body .mute{max-width:34em}
+.wk__code{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
+.wk__code span{font-size:.8125rem;font-weight:600;padding:5px 10px;border-radius:8px;background:#fff;border:1px solid var(--line)}
+.wk__go{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:0}
+.wks__fn{margin-top:40px;max-width:52em}
+@media (max-width:860px){.wks{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){.wk__lap img,.wk__ph,.wk__media{transition:none}}
+
+/* ---------- 5) Kısa örnek şeridi (ana sayfa koyu bant, Websites sayfası) ---------- */
+.more-h{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-top:clamp(56px,7vw,96px);padding-top:32px;border-top:1px solid var(--line)}
+.sec--ink .more-h{border-top-color:rgba(255,255,255,.16)}
+.more-h h3{font-size:clamp(1.4rem,1.1rem + 1vw,2rem)}
+.wk-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-top:28px}
+.wk-s a{display:grid;gap:4px;text-decoration:none;color:inherit}
+.wk-s__ph{display:block;aspect-ratio:300/400;border-radius:16px;overflow:hidden;border:4px solid var(--ink);background:#fff;margin-bottom:10px;transition:transform .45s var(--ease-out),box-shadow .45s}
+.sec--ink .wk-s__ph{border-color:rgba(255,255,255,.9)}
+.wk-s__ph img{width:100%;height:100%;object-fit:cover;object-position:50% 0;transition:object-position 3.5s cubic-bezier(.45,0,.55,1)}
+.wk-s b{font-size:1rem}.wk-s a>span:last-child{font-size:.875rem;color:var(--mute)}
+.sec--ink .wk-s a>span:last-child{color:#B9C4E8}
+.sec--ink .wk-row a:not(.btn){color:#fff}
+@media (hover:hover){.wk-s a:hover .wk-s__ph{transform:translateY(-6px);box-shadow:0 22px 40px -16px rgba(0,0,0,.45)}.wk-s a:hover .wk-s__ph img{object-position:50% 100%}}
+@media (max-width:900px){.wk-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:44%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;-webkit-overflow-scrolling:touch}.wk-s{scroll-snap-align:start}}
+
+/* ---------- 6) küçük düzeltmeler ---------- */
+.sm__bar{flex-wrap:wrap}
+.sm .sm__spec li i{color:#B9C4E8}

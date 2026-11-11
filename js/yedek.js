@@ -1,0 +1,1 @@
+(function(){document.addEventListener('submit',function(e){e.preventDefault();e.stopImmediatePropagation();},true);document.addEventListener('DOMContentLoaded',function(){[].forEach.call(document.querySelectorAll('form button[type=submit],form [type=submit]'),function(b){b.disabled=true;b.setAttribute('aria-disabled','true');});});})();
