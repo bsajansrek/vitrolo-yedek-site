@@ -1,0 +1,32 @@
+name: aylik-yedek-prova
+# K171: ayda bir yedek adresi GET ile dener; erisilemezse ya da yedek 45 gunden eskiyse ntfy ile haber verir.
+# Siteyi yenilemek (site-v3 -> bu depo) Mac'ten: 10-vitrolo/scripts/yedek-site-yayinla.sh (kaynak bu depoda degil).
+on:
+  schedule: [{ cron: "17 6 3 * *" }]
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  NTFY_KONU: ${{ secrets.NTFY_KONU }}
+  YEDEK_ADRES: https://bsajansrek.github.io/vitrolo-yedek-site/
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Yedek adresi dene
+        run: |
+          code=$(curl -sS -m 30 -o body.html -w '%{http_code}' "$YEDEK_ADRES" || echo 000)
+          echo "HTTP $code"
+          [ "$code" = "200" ] || { echo "YEDEK ADRES ACILMADI ($code)"; exit 1; }
+          grep -qi "vitrolo" body.html || { echo "icerik beklenen gibi degil"; exit 1; }
+          curl -fsS -m 30 -o /dev/null "${YEDEK_ADRES}pricing/" || { echo "pricing sayfasi acilmadi"; exit 1; }
+      - name: Yedek ne kadar eski
+        run: |
+          son=$(git log -1 --format=%ct -- yedek-notu.json); simdi=$(date +%s)
+          gun=$(( (simdi - son) / 86400 )); echo "yedek yasi: $gun gun"
+          [ "$gun" -le 45 ] || { echo "YEDEK ESKI ($gun gun): yedek-site-yayinla.sh calistir"; exit 1; }
+      - name: ntfy bildirimi
+        if: failure() && env.NTFY_KONU != ''
+        run: |
+          curl -fsS -m 20 -H "Title: Vitrolo yedek site PROVASI BASARISIZ" -H "Priority: high" -d "Aylik yedek site provasi calismadi. Actions'a bak: vitrolo-yedek-site" "https://ntfy.sh/$NTFY_KONU" >/dev/null || true
